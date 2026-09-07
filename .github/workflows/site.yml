@@ -29,6 +29,13 @@ jobs:
     uses: jlt-commons/ci-builds/.github/workflows/site.yml@main
     with:
       base-path: /glitter-uikit
+      # v0.3.0 adds a default Contributing page to every project's guide
+      # (docs-engine README, "The default Contributing page"), and this
+      # project doesn't have its own docs/guide/contributing.md to override
+      # it with. Pinned explicitly, rather than left on the shared
+      # workflow's own default, so a future default bump doesn't change
+      # this project's build without a deliberate commit.
+      docs-engine-ref: v0.3.0
     permissions:
       contents: read
       pages: write
