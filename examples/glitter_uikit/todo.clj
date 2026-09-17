@@ -11,7 +11,7 @@
   render time. Here ALL state lives in one top-level atom, the view is a pure
   function of it, and every handler is DATA — an action tuple carrying whatever
   the closure used to close over (the row index, the new entry text) —
-  dispatched through glitter.nexus.
+  dispatched through nexus (the standalone nexus-jolt package).
 
   This file mirrors glitter's own todo.clj's view shape and state model —
   same tags (both already use :vbox/:hbox rather than bare :box, so this
@@ -27,7 +27,7 @@
             [glitter-uikit.app :as app]
             [glitter-uikit.appkit :as appkit]
             [glitter.core :as core]
-            [glitter.nexus.registry :as nxr]))
+            [nexus.registry :as nxr]))
 
 (defonce state
   (atom {:tasks [{:text "Try the glitter-uikit counter demo"
@@ -136,7 +136,7 @@
 (nxr/register-system->state! deref)
 (nxr/on-error (fn [_ctx {:keys [err]
                          :as error}]
-                (log/error err "glitter.nexus dispatch error" (dissoc error :err))))
+                (log/error err "nexus dispatch error" (dissoc error :err))))
 
 (core/set-dispatch!
  (fn [event actions] (nxr/dispatch state event actions)))

@@ -28,44 +28,44 @@
  ;; AppKit is NOT declared under :jolt/native — glitter-uikit.ffi dlopens the
  ;; frameworks itself, guarded to macOS only, mirroring glimmer-uikit.
  ;;
- ;; KNOWN LIMITATION: glitter's own deps.edn declares GTK4/GLib/GObject/GIO
- ;; under :jolt/native, and jolt inherits a dependency's natives transitively
- ;; and hard-fails in load-natives! before any namespace loads when one is
- ;; missing. So GTK4 must be installed to run anything here, even though this
- ;; renderer never calls a GTK function. Verified live, including that an
- ;; :aliases-scoped :jolt/native is silently ignored, so there is no way to
- ;; scope it away. The real fix is extracting a natives-free glitter-core the
- ;; way upstream glimmer did at v0.1.0 — see README.md's Status section.
+ ;; Was previously a dependency on the full `glitter` package, which declares
+ ;; GTK4/GLib/GObject/GIO under :jolt/native — jolt inherits a dependency's
+ ;; natives transitively, so GTK4 was on the hook to be installed to run
+ ;; anything here, even though this renderer never calls a GTK function. Fixed
+ ;; by depending on `glitter-core` directly instead: the natives-free
+ ;; extraction of glitter.core/glitter.protocols/glitter.alias (same names,
+ ;; same code, no :jolt/native declaration anywhere in its own deps.edn).
+ ;; `nexus-jolt` is added alongside it because examples/flights.clj,
+ ;; temperature.clj and todo.clj dispatch through nexus.registry for real
+ ;; (not test-only), so it belongs in top-level :deps rather than an alias.
  ;;
- ;; Dependency form: a pinned git coordinate, not :local/root — glitter is
- ;; public, so jolt can `git clone` it itself; :local/root only resolves on a
- ;; machine with a sibling ../glitter checkout, which is nobody outside this
- ;; machine. Verified against jolt's own source, not inferred from JVM
- ;; tools.deps: jolt.deps's ns docstring (jolt-core/jolt/deps.clj:1-12) lists
- ;; :git/url + :git/sha and :override-deps among what this reduced tools.deps
- ;; supports, :override-deps is implemented at deps.clj:917-935 and exercised
- ;; by test/deps_expand_test.clj:112, and the same docstring notes the deps
- ;; walk is breadth-first so a top-level coordinate wins over the transitive
- ;; one it's overriding. That's what makes the :dev alias below predictable:
- ;; it re-adds :local/root "../glitter" as a TOP-LEVEL :override-deps entry,
- ;; so `jolt -M:dev:test` resolves against a sibling checkout for the
- ;; co-development loop, while every other invocation (including CI and
- ;; anyone else's first build) resolves the pin below.
- :deps {io.github.jlt-commons/glitter
-        {:git/url "https://github.com/jlt-commons/glitter"
-         :git/sha "33713d607d11cc1fbf8cda237c0b6f251ac43388"}}
+ ;; Dependency form: :local/root, NOT a pinned git coordinate — neither
+ ;; glitter-core nor nexus-jolt has a commit pushed to its GitHub repo yet
+ ;; (both are private, reserved names only, per the still-in-progress
+ ;; glitter-core-extraction arc in jlt-commons/glitter). :local/root only
+ ;; resolves on a machine with sibling ../glitter-core and ../nexus-jolt
+ ;; checkouts, which is nobody outside this machine yet. Once both are
+ ;; pushed, switch both entries to a pinned :git/url + :git/sha, mirroring
+ ;; how this file used to pin glitter itself.
+ ;; src/glitter_uikit/widget.clj requires hiccup2.core directly (a real
+ ;; production dependency, not test-only — confirmed via grep before adding
+ ;; it here rather than scoping it to :test). flights.clj/temperature.clj/
+ ;; todo.clj log dispatch errors via clojure.tools.logging. Both used to
+ ;; arrive transitively through glitter's own pins of these coordinates; now
+ ;; declared directly since glitter is no longer in the graph. Same SHAs
+ ;; glitter carries them at.
+ :deps {io.github.jlt-commons/glitter-core {:local/root "../glitter-core"}
+        io.github.jlt-commons/nexus-jolt {:local/root "../nexus-jolt"}
+        weavejester/hiccup
+        {:git/url "https://github.com/weavejester/hiccup"
+         :git/sha "b6b12097ba973141fe87c1b4d6a27ddcce5d5929"}
+        org.clojure/tools.logging
+        {:git/url "https://github.com/jolt-lang/logging"
+         :git/sha "ec6747e55583118d881faf4ab41e68d7e587ce4c"}}
 
  ;; Each runnable has its own alias with :main-opts (jolt's -M:alias form needs
  ;; main-opts). Tasks are thin wrappers so you can run `jolt counter`, etc.
- :aliases {;; Co-development loop only: overrides the pinned glitter dep back
-           ;; to a sibling checkout. Combine with any runnable alias, e.g.
-           ;; `jolt -M:dev:test` or `jolt -M:dev:counter`. Requires a
-           ;; `../glitter` checkout next to this one; nobody outside this
-           ;; machine needs it or has it.
-           :dev {:override-deps
-                 {io.github.jlt-commons/glitter {:local/root "../glitter"}}}
-
-           :test    {:extra-paths ["test" "examples"]
+ :aliases {:test    {:extra-paths ["test" "examples"]
                      :main-opts ["-m" "glitter-uikit.test-runner"]}
            :smoke   {:extra-paths ["examples"] :main-opts ["-m" "glitter-uikit.smoke"]}
            :counter {:extra-paths ["examples"] :main-opts ["-m" "glitter-uikit.counter"]}

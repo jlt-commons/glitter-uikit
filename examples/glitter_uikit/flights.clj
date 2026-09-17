@@ -38,7 +38,7 @@
             [glitter-uikit.app :as app]
             [glitter-uikit.appkit :as appkit]
             [glitter.core :as core]
-            [glitter.nexus.registry :as nxr]
+            [nexus.registry :as nxr]
             [tick.core :as t]))
 
 (def ^:private date-formatter (t/formatter "dd.MM.yyyy"))
@@ -173,7 +173,7 @@
 (nxr/register-system->state! deref)
 (nxr/on-error (fn [_ctx {:keys [err]
                          :as error}]
-                (log/error err "glitter.nexus dispatch error" (dissoc error :err))))
+                (log/error err "nexus dispatch error" (dissoc error :err))))
 
 (core/set-dispatch!
  (fn [event actions] (nxr/dispatch state event actions)))

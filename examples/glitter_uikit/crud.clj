@@ -25,7 +25,7 @@
   section and nothing else changes — which is itself the point the renderer
   split keeps making.
 
-  Uses counter.clj's plain state-atom dispatch rather than glitter.nexus. The
+  Uses counter.clj's plain state-atom dispatch rather than nexus. The
   three actions all need to read current state before deciding what to do, which
   is exactly what glitter needed nexus's action-EXPANSION layer for; a plain
   dispatch fn reads @state directly and needs no such layer.

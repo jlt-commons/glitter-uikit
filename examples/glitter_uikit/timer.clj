@@ -17,7 +17,7 @@
      registry; doing only one of the two either leaks the handler or leaves a
      live timer firing into an empty registry forever.
 
-  2. glitter routes the tick through glitter.nexus with a :nexus/system->state
+  2. glitter routes the tick through nexus with a :nexus/system->state
      that stamps a fresh :now onto every dispatch. This file uses counter.clj's
      plain state-atom dispatch, so there is no such hook — and that makes
      glitter's own hardest-won lesson here load-bearing in a different way:

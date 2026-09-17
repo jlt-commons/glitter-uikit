@@ -9,7 +9,7 @@
 
   Same model as counter.clj, not todo.clj: one top-level state atom, a pure
   state -> hiccup view, handlers as DATA dispatched through one global fn.
-  todo.clj's glitter.nexus machinery is deliberately absent — the subject here
+  todo.clj's nexus machinery is deliberately absent — the subject here
   is the widgets, and nexus would be a second thing to learn at the same time.
 
   Two gotchas this file has to respect, both documented in CONTRIBUTING.md:

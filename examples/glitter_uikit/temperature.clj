@@ -21,8 +21,8 @@
      size; :width-chars only affects wrapping.
   2. app/run takes no :app-id — that is a GApplication identifier with no
      AppKit counterpart.
-  3. The requires point at glitter-uikit.app / glitter-uikit.appkit. Everything
-     under glitter.* (core, nexus.registry) is shared verbatim.
+  3. The requires point at glitter-uikit.app / glitter-uikit.appkit. glitter.core
+     and nexus.registry (the standalone nexus-jolt package) are shared verbatim.
 
   Why this task is a good fit for THIS renderer specifically: it writes back to
   the very field being typed in, on every keystroke. That is the exact case
@@ -39,7 +39,7 @@
             [glitter-uikit.app :as app]
             [glitter-uikit.appkit :as appkit]
             [glitter.core :as core]
-            [glitter.nexus.registry :as nxr]))
+            [nexus.registry :as nxr]))
 
 (defn fahrenheit->celsius [f]
   (* (- f 32) (/ 5.0 9)))
@@ -152,7 +152,7 @@
 (nxr/register-system->state! deref)
 (nxr/on-error (fn [_ctx {:keys [err]
                          :as error}]
-                (log/error err "glitter.nexus dispatch error" (dissoc error :err))))
+                (log/error err "nexus dispatch error" (dissoc error :err))))
 
 (core/set-dispatch!
  (fn [event actions] (nxr/dispatch state event actions)))
