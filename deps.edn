@@ -48,7 +48,7 @@
  ;; glitter carries them at.
  :deps {io.github.jlt-commons/glitter-core
         {:git/url "https://github.com/jlt-commons/glitter-core"
-         :git/sha "8fb74264008b087e1fec7b30cf81a2862188622c"}
+         :git/sha "4fba1ddb069be798adc1ef0c028e6e21a21ec9f3"}
         io.github.jlt-commons/nexus-jolt
         {:git/url "https://github.com/jlt-commons/nexus-jolt"
          :git/sha "353f31255629fa0ec134c5daed68dbd2aa80c300"}
