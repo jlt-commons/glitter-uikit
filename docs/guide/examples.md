@@ -12,8 +12,8 @@ Run any of them with `bb <name>`, or `jolt -M:<name>` without babashka.
 `bb info` prints the whole list grouped, and `bb smokes` runs all eight smokes
 in sequence, stopping at the first failure.
 
-All fourteen need a GUI session — and GTK4 installed, even though this renderer
-never calls a GTK function. See [Limitations](limitations.md) for why.
+All fourteen need a GUI session — no GTK4 required anymore, see
+[Limitations](limitations.md) for the fix.
 
 ## Interactive demos
 

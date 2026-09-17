@@ -109,9 +109,12 @@ against the previous vdom and issues the minimal set of `IRender`/
 - [glimmer-uikit](https://github.com/jolt-lang/glimmer-uikit) — the
   Reagent-style sibling this project forked its AppKit FFI/widget layer
   from.
-- [glitter](https://github.com/jlt-commons/glitter) — the source of
-  `glitter.core`'s reconciler and the GTK4 renderer this project mirrors
-  the structure of.
+- [glitter-core](https://github.com/jlt-commons/glitter-core) — the
+  natives-free package `glitter.core`'s reconciler and `glitter.alias`
+  actually live in now, and this project's direct dependency.
+- [glitter](https://github.com/jlt-commons/glitter) — the GTK4 renderer
+  this project mirrors the structure of, built on `glitter-core` the
+  same way this project is.
 - `README.md` (repo root) — feature overview, quick start, requirements,
   and the full `jolt`/`bb` command reference.
 - `CONTRIBUTING.md` (repo root) — conventions, gotchas, file map and scope.

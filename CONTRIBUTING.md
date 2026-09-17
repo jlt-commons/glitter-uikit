@@ -34,9 +34,9 @@ this repo, but the pull request build is the authority.
 
 ## Build & run
 
-Requirements: [Jolt](https://github.com/jolt-lang/jolt), macOS 10.13+
-with Xcode Command Line Tools, and GTK4 + GLib (via `../glitter`'s
-`deps.edn` — see README's Status section for the limitation and its fix).
+Requirements: [Jolt](https://github.com/jolt-lang/jolt) and macOS 10.13+
+with Xcode Command Line Tools. No GTK4 — see README's Status section for
+the fix that dropped it.
 
 ```
 jolt -M:test                        # unit suite (headless; prints its own totals)

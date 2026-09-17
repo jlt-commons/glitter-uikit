@@ -8,26 +8,30 @@ during this port's final whole-branch review. None are unnoticed rough
 edges — each has a reason the fix was deferred rather than a reason it's
 impossible.
 
-## GTK4 must be installed, even though this renderer never touches it
+## ~~GTK4 must be installed, even though this renderer never touches it~~ — fixed 2026-09-17
 
-`deps.edn` pulls in `glitter` via `:local/root "../glitter"`, and
-glitter's own `deps.edn` declares GTK4/GLib/GObject/GIO under
+`deps.edn` used to pull in `glitter` for `glitter.core`/`glitter.alias`,
+and glitter's own `deps.edn` declares GTK4/GLib/GObject/GIO under
 `:jolt/native`. Jolt inherits a dependency's natives transitively and
 hard-fails in `load-natives!` before any namespace loads if one is
-missing — so a `glitter-uikit` app needs GTK4 installed even though it
+missing — so a `glitter-uikit` app needed GTK4 installed even though it
 renders exclusively through AppKit and `glitter-uikit.ffi` never calls a
-GTK function. `deps.edn`'s own comment records this, and it isn't a
-guess: an `:aliases`-scoped `:jolt/native` was verified live to be
-silently ignored, so it cannot be scoped away from this side.
+GTK function. An `:aliases`-scoped `:jolt/native` was verified live to
+be silently ignored, so it couldn't be scoped away from this side.
 
-**The real fix** is extracting a natives-free `glitter-core` — the
+**Fixed** by extracting a natives-free
+[`glitter-core`](https://github.com/jlt-commons/glitter-core) — the
 toolkit-agnostic half of glitter (`core`, `protocols`, `hiccup`, `vdom`,
-`alias`, `assert`, `asserts`, `errors`, `console-logger`, `env`,
-`nexus/*`) — exactly the split upstream glimmer made at its own v0.1.0,
-with glitter (GTK4) and glitter-uikit (AppKit) both depending on it.
-Recorded in `README.md`'s Status section as deferred out of this arc
-because it touches `glitter` and `glitter-gl`, not because it's hard to
-see how to do.
+`alias`, `assert`, `asserts`, `errors`, `console-logger`, `env`) plus a
+standalone [`nexus-jolt`](https://github.com/jlt-commons/nexus-jolt)
+(`nexus.core`/`nexus.registry`, renamed from `glitter.nexus`/
+`glitter.nexus.registry`) — the same split upstream glimmer made at its
+own v0.1.0. `deps.edn` now pins `glitter-core` and `nexus-jolt`
+directly instead of `glitter`, and `glitter` is no longer anywhere in
+this project's dependency graph. Verified:
+`(find-ns 'glitter.gtk)` returns `nil` under the new pins, `jolt path`
+shows no `glitter` gitlib path, and CI's "Install GTK4" step has been
+removed (see `.github/workflows/ci.yml`).
 
 ## The no-op `IRender` methods: no CSS, no inline styling
 
@@ -330,32 +334,23 @@ throws a named error when the class is absent rather than letting a null class
 crash inside `objc_msgSend` with nothing pointing at the cause, so an older
 system gets a clear message about that one tag instead of an opaque abort.
 
-## Two gaps that are about verification, not behavior
+## One gap that's about verification, not behavior
 
-The rest of this page is about what the code actually does. These two
-are about how confidently that's known.
+The rest of this page is about what the code actually does. This one is
+about how confidently that's known.
 
-### The CI workflow has never been executed
-
-`.github/workflows/tests.yml` is `on: [workflow_dispatch]` only — no
-`push`/`pull_request` trigger — because the project has no GitHub
-Actions credit budget and nothing should run automatically. That means
-no run of this workflow has ever completed, and its own comments flag a
-specific, plausible failure point rather than claiming a clean bill of
-health: the job checks out this repo, then tries to check out `glitter`
-(needed for `deps.edn`'s `:local/root "../glitter"`) using the job's
-default `GITHUB_TOKEN`, which GitHub scopes to the triggering repository
-only. If `jlt-commons/glitter` is private, that second checkout has no
-credentials to succeed with, and the workflow file says so directly:
-
-> No GitHub Actions run has been performed for this project ... so this
-> has NOT been verified on a real runner. The first manual run may fail
-> at this exact step; that is a disclosed gap, not a surprise.
-
-Nothing downstream of that checkout — installing jolt, installing GTK4,
-running `jolt -M:test` — has ever executed in that environment either,
-since the workflow would never get that far if the checkout itself
-fails.
+~~The CI workflow has never been executed~~ — no longer true. The
+original `.github/workflows/tests.yml` was `on: [workflow_dispatch]`
+only, over concerns about GitHub Actions billing on a private repo, and
+had never completed a run; its own comments flagged a plausible failure
+checking out a second, possibly-private `glitter` repo for `deps.edn`'s
+`:local/root "../glitter"`. That file no longer exists. It was replaced
+by `.github/workflows/ci.yml`, which runs on every pull request and
+push to `main` (standard runners are free on a public repo, and this
+one is), has completed successfully multiple times, and no longer
+checks out any second repo at all — `deps.edn` pins `glitter-core`/
+`nexus-jolt` via `:git/url` + `:git/sha`, which jolt fetches itself
+during dependency resolution.
 
 ### The thunk-queue drain fix has no adversarial-concurrency test
 

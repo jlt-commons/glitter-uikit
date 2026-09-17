@@ -146,18 +146,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Not because anything here calls GTK — this renderer is AppKit only.
-      # glitter declares GTK4 under :jolt/native, and jolt inherits a
-      # dependency's natives transitively and hard-fails in load-natives!
-      # before any namespace loads. See CONTRIBUTING.md's Status note.
-      - name: Install GTK4
-        run: |
-          set -euo pipefail
-          brew install gtk4
-          echo "::group::what resolved"
-          ls -1 "$(brew --prefix)/lib" | grep -E 'libgtk-4|libglib-2\.0|libgobject-2\.0|libgio-2\.0' || true
-          echo "::endgroup::"
-
       # Official install script from jolt's README, which owns the archive
       # naming and verifies the checksum. $JOLT_VERSION comes from the
       # workflow-level env above and is read by the script rather than
@@ -211,9 +199,9 @@ jobs:
         with:
           clojure-lsp-version: "2026.05.05-12.58.26"
 
-      # deps.edn pins glitter via :git/url + :git/sha rather than :local/root,
-      # so jolt clones it during dependency resolution — no sibling checkout
-      # needed on the runner.
+      # deps.edn pins glitter-core/nexus-jolt via :git/url + :git/sha,
+      # so jolt clones them during dependency resolution — no sibling
+      # checkout needed on the runner.
       - name: Unit suite
         run: |
           set +e
@@ -239,7 +227,6 @@ jobs:
         run: |
           set +e
           echo "jolt:      $(command -v jolt || echo '<not on PATH>')"
-          echo "gtk4 libs: $(ls -1 "$(brew --prefix)/lib" 2>/dev/null | grep -c 'libgtk-4' || echo 0)"
           echo "macOS:     $(sw_vers -productVersion)"
           echo "deps:"
           JOLT_PWD="$PWD" jolt path 2>&1 | tr ':' '\n' | head -20
