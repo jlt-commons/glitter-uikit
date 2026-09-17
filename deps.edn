@@ -39,14 +39,6 @@
  ;; temperature.clj and todo.clj dispatch through nexus.registry for real
  ;; (not test-only), so it belongs in top-level :deps rather than an alias.
  ;;
- ;; Dependency form: :local/root, NOT a pinned git coordinate — neither
- ;; glitter-core nor nexus-jolt has a commit pushed to its GitHub repo yet
- ;; (both are private, reserved names only, per the still-in-progress
- ;; glitter-core-extraction arc in jlt-commons/glitter). :local/root only
- ;; resolves on a machine with sibling ../glitter-core and ../nexus-jolt
- ;; checkouts, which is nobody outside this machine yet. Once both are
- ;; pushed, switch both entries to a pinned :git/url + :git/sha, mirroring
- ;; how this file used to pin glitter itself.
  ;; src/glitter_uikit/widget.clj requires hiccup2.core directly (a real
  ;; production dependency, not test-only — confirmed via grep before adding
  ;; it here rather than scoping it to :test). flights.clj/temperature.clj/
@@ -54,8 +46,18 @@
  ;; arrive transitively through glitter's own pins of these coordinates; now
  ;; declared directly since glitter is no longer in the graph. Same SHAs
  ;; glitter carries them at.
- :deps {io.github.jlt-commons/glitter-core {:local/root "../glitter-core"}
-        io.github.jlt-commons/nexus-jolt {:local/root "../nexus-jolt"}
+ ;; git@ (SSH), not https:// like every other pin in this file — both repos
+ ;; are PRIVATE, and jolt's git fetch can't authenticate an anonymous https
+ ;; clone against a private repo. SSH works because it reuses this machine's
+ ;; existing GitHub SSH key. Anyone else building this (CI, another
+ ;; contributor's machine) needs that same SSH access configured, or these
+ ;; two repos made public.
+ :deps {io.github.jlt-commons/glitter-core
+        {:git/url "git@github.com:jlt-commons/glitter-core.git"
+         :git/sha "8fb74264008b087e1fec7b30cf81a2862188622c"}
+        io.github.jlt-commons/nexus-jolt
+        {:git/url "git@github.com:jlt-commons/nexus-jolt.git"
+         :git/sha "353f31255629fa0ec134c5daed68dbd2aa80c300"}
         weavejester/hiccup
         {:git/url "https://github.com/weavejester/hiccup"
          :git/sha "b6b12097ba973141fe87c1b4d6a27ddcce5d5929"}
