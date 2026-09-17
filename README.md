@@ -22,27 +22,13 @@ views, and glitter's reconciler drives prop/event wiring through the
 **macOS 10.13+** with **Xcode Command Line Tools** (provides `clang`,
 `ld`, and frameworks).
 
-**GTK4 is required** — this is a known limitation inherited from
-glitter, and it is real: this renderer never calls a single GTK function,
-but jolt inherits a dependency's `:jolt/native` declarations transitively
-and hard-fails in `load-natives!` before any namespace loads when one is
-missing. glitter's own `deps.edn` declares GTK4 and GLib under
-`:jolt/native`, so a glitter-uikit app needs GTK4 installed anyway.
-
-Install GTK4 via Homebrew:
-
-```sh
-brew install gtk4 glib
-```
-
-The limitation cannot be scoped away from this side — verified live that an
-`:aliases`-scoped `:jolt/native` is silently ignored. The tracked fix is to
-extract a natives-free `glitter-core` — the toolkit-agnostic half of
-glitter (`core`, `protocols`, `hiccup`, `vdom`, `alias`, `assert`,
-`asserts`, `errors`, `console-logger`, `env`, `nexus/*`) — the same split
-[upstream glimmer made at its own v0.1.0](https://github.com/jolt-lang/glimmer/tree/v0.1.0),
-with glitter (GTK4) and glitter-uikit (AppKit) both depending on it. See
-the Status section below for where that stands.
+**No GTK4.** This renderer depends on
+[`glitter-core`](https://github.com/jlt-commons/glitter-core) directly —
+the toolkit-agnostic half of glitter (`core`, `protocols`, `hiccup`,
+`vdom`, `alias`, `assert`, `asserts`, `errors`, `console-logger`, `env`)
+— rather than the full `glitter` package, which declares GTK4/GLib under
+`:jolt/native`. See the Status section below for the history of this
+fix.
 
 ## Quick start
 
@@ -117,27 +103,21 @@ bb repl-live-smoke      # nREPL live editing
 
 ## Dependency modes
 
-`deps.edn` declares glitter as a pinned git coordinate
-(`io.github.jlt-commons/glitter` at a fixed `:git/sha`). jolt fetches and
-builds against that exact commit, so a fresh clone of this repo builds
-with no other setup — nothing needs to sit next to it on disk. This is
-the default, and what CI and every command in Quick start/Running above
-uses unless you say otherwise:
+`deps.edn` declares `glitter-core` and `nexus-jolt` as pinned git
+coordinates (`io.github.jlt-commons/glitter-core` and
+`io.github.jlt-commons/nexus-jolt`, each at a fixed `:git/sha`). jolt
+fetches and builds against those exact commits, so a fresh clone of this
+repo builds with no other setup — nothing needs to sit next to it on
+disk:
 
 ```sh
-jolt -M:counter          # builds against the pinned glitter sha
+jolt -M:counter          # builds against the pinned shas
 ```
 
-For co-developing this renderer against an unreleased glitter change, a
-`:dev` alias overrides the pin back to a sibling checkout at `../glitter`.
-Combine it with any runnable alias:
-
-```sh
-jolt -M:dev:counter      # builds against ../glitter instead of the pin
-```
-
-`:dev` only helps if `../glitter` actually exists next to this checkout
-— it is not something a first-time user needs or has.
+There is no `:dev` alias for local co-development against sibling
+checkouts at the moment — add one the same way `glitter`'s own
+`deps.edn` does (an `:override-deps` entry per coordinate) if you need
+it.
 
 ## Hiccup reference
 
@@ -206,18 +186,6 @@ See `docs/guide/index.md` for the full breakdown.
 - Design spec and implementation plan are kept in a private planning store and
   are not part of this repository.
 
-## Licence
-
-MIT for this project's own code — see [`LICENSE`](LICENSE).
-
-**Read [`NOTICE.md`](NOTICE.md) before reusing any of it.** Parts of
-`src/glitter_uikit/` are forked from
-[glimmer-uikit](https://github.com/jolt-lang/glimmer-uikit), which ships no
-LICENSE file at all — absent a license, default copyright reserves all rights,
-so no grant has been made for that material. `NOTICE.md` records the
-file-by-file provenance, pinned to the exact ref and SHA so the claim is
-falsifiable.
-
 ## Status
 
 Ported from glimmer-uikit v0.1.0 (2026-08-20 arc) — see `NOTICE.md` for the
@@ -225,17 +193,27 @@ full verbatim/adapted/new breakdown, including the defects fixed during the
 port (carried from upstream, plus one the port's own new code introduced)
 and the AppKit behaviors measured rather than assumed.
 
-**Known limitation — GTK4 is required.** glitter's `deps.edn` declares GTK4 and
-GLib under `:jolt/native`, and jolt inherits a dependency's natives transitively
-and hard-fails before any namespace loads if one is missing. So a glitter-uikit
-app needs GTK4 installed even though it renders through AppKit and never calls a
-GTK function. Verified that an `:aliases`-scoped `:jolt/native` is ignored, so
-there is no way to scope it away from this side. **The fix is to extract a
-natives-free `glitter-core`** — the toolkit-agnostic half of glitter
-(`core`, `protocols`, `hiccup`, `vdom`, `alias`, `assert`, `asserts`, `errors`,
-`console-logger`, `env`, `nexus/*`) — exactly the split upstream glimmer made at
-its own v0.1.0, with glitter (GTK4) and glitter-uikit (AppKit) both depending on
-it. Deferred out of this arc because it touches glitter and glitter-gl.
+**Fixed 2026-09-17 — no more GTK4 requirement.** glitter's `deps.edn`
+declares GTK4/GLib under `:jolt/native`, and jolt inherits a
+dependency's natives transitively and hard-fails before any namespace
+loads if one is missing — so a glitter-uikit app needed GTK4 installed
+even though it renders through AppKit and never calls a GTK function.
+An `:aliases`-scoped `:jolt/native` was verified to be silently ignored,
+so there was no way to scope it away from this side. The fix was
+extracting a natives-free
+[`glitter-core`](https://github.com/jlt-commons/glitter-core) —
+the toolkit-agnostic half of glitter (`core`, `protocols`, `hiccup`,
+`vdom`, `alias`, `assert`, `asserts`, `errors`, `console-logger`, `env`)
+plus a standalone [`nexus-jolt`](https://github.com/jlt-commons/nexus-jolt)
+(the dispatch engine, `glitter.nexus`/`glitter.nexus.registry` renamed to
+match upstream `nexus.core`/`nexus.registry`) — the same split upstream
+glimmer made at its own v0.1.0. This package now depends on both
+directly instead of on the full `glitter`. `weavejester/hiccup` and
+`clojure.tools.logging`, previously arriving transitively through
+`glitter`, are declared here directly now that `glitter` is no longer in
+the dependency graph. `glitter-gl` still depends on the full `glitter`
+package and keeps the GTK4 requirement — it genuinely registers a GTK
+widget, unlike this renderer, so the same fix doesn't apply there.
 
 ## Licence
 
@@ -248,6 +226,10 @@ itself. SPDX identifier: `EPL-2.0`. It was MIT until 2026-09-05.
 That grant covers this project's own code only. The files ported from
 glimmer-uikit are a separate question, recorded accurately in
 [`NOTICE.md`](NOTICE.md) and in the
-[porting and attribution guide](docs/guide/porting-and-attribution.md): upstream
-ships no LICENSE file, so no grant has been made for them, and nothing here
-claims otherwise.
+[porting and attribution guide](docs/guide/porting-and-attribution.md): at
+the commit actually ported from (2026-08-20), upstream shipped no LICENSE
+file, so no grant was made for them, and nothing here claims otherwise.
+**Note as of 2026-09-18:** `jolt-lang/glimmer-uikit` was recreated on
+2026-09-13 as an unrelated codebase by a different author, now under MIT —
+that grant does not extend to the code actually forked here, which the live
+upstream URL no longer even shows. See `NOTICE.md` for the full detail.

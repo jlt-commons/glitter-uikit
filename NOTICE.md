@@ -3,16 +3,33 @@
 ## glimmer-uikit
 
 The following files under `src/glitter_uikit/` are forked from
-[glimmer-uikit](https://github.com/jolt-lang/glimmer-uikit) at tag `v0.1.0`
-(commit `8f1c6a4`), Copyright 2026 Dmitri Sotnikov (`Yogthos`), published under
-the `jolt-lang` organization.
+[glimmer-uikit](https://github.com/jolt-lang/glimmer-uikit) **at the time of
+porting** (2026-08-20 arc), tag `v0.1.0`, commit `8f1c6a4`, Copyright 2026
+Dmitri Sotnikov (`Yogthos`), published under the `jolt-lang` organization.
 
-**Upstream ships no LICENSE file.** Absent a license, default copyright reserves
-all rights — no grant has been made. This section records accurate provenance,
-not a claimed permission. The same author licenses the sibling
-[glimmer-gl](https://github.com/jolt-lang/glimmer-gl) under Apache-2.0, so this
-appears to be an upstream oversight rather than a deliberate reservation; that
-is an observation, not a substitute for a license.
+**At that commit, upstream shipped no LICENSE file.** Absent a license,
+default copyright reserves all rights — no grant was made. This section
+records accurate provenance, not a claimed permission. The same author
+licenses the sibling [glimmer-gl](https://github.com/jolt-lang/glimmer-gl)
+under Apache-2.0, so this appeared to be an upstream oversight rather than a
+deliberate reservation; that was an observation, not a substitute for a
+license.
+
+**As of 2026-09-18, this no longer describes the live repository at all.**
+`jolt-lang/glimmer-uikit` was recreated from scratch on 2026-09-13 as an
+entirely different, unrelated codebase (30 commits, all by Larry Staton Jr.,
+imported from a separate project named "Tiger 5 Tracker" and then renamed to
+`glimmer-uikit`) — a different author, different code, and now a proper MIT
+`LICENSE`. Commit `8f1c6a4` no longer exists in that repository (confirmed:
+GitHub returns "No commit found" for it), and the `v0.1.0` tag now points at
+a different commit entirely, tagged by the new author on 2026-09-13. **The
+new LICENSE covers the new codebase only** — it grants nothing for the
+Yogthos-authored code actually forked into this project, which the live
+`jolt-lang/glimmer-uikit` URL no longer even shows. The licensing gap for the
+files listed below is unchanged and, since the original content is gone from
+upstream, no longer independently verifiable from the URL alone — this
+`NOTICE.md` and jolt's local gitlibs cache of the pinned SHA are what remain
+of the record.
 
 Authorship verified from git history, pinned to the exact ref and SHA counted so
 the claim is falsifiable:

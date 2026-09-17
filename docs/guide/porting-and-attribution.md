@@ -8,16 +8,23 @@ wins.
 ## Bucket 1: ported from glimmer-uikit
 
 Mechanical namespace-rename port from
-[glimmer-uikit](https://github.com/jolt-lang/glimmer-uikit) commit `8f1c6a4`
-(tag `v0.1.0`), Copyright 2026 Dmitri Sotnikov, published under the
-`jolt-lang` organization.
+[glimmer-uikit](https://github.com/jolt-lang/glimmer-uikit) **at the time of
+porting**, commit `8f1c6a4` (tag `v0.1.0`), Copyright 2026 Dmitri Sotnikov,
+published under the `jolt-lang` organization.
 
-**Upstream ships no LICENSE file.** Absent a license, default copyright
-reserves all rights — no grant has been made. This section records accurate
-provenance, not a claimed permission. The same author licenses the sibling
-glimmer-gl under Apache-2.0, so this appears to be an upstream oversight
-rather than a deliberate reservation; that is an observation, not a
-substitute for a license.
+**At that commit, upstream shipped no LICENSE file.** Absent a license,
+default copyright reserves all rights — no grant was made. This section
+records accurate provenance, not a claimed permission. The same author
+licenses the sibling glimmer-gl under Apache-2.0, so this appeared to be an
+upstream oversight rather than a deliberate reservation; that was an
+observation, not a substitute for a license.
+
+**As of 2026-09-18, the live `jolt-lang/glimmer-uikit` is a different,
+unrelated project** — recreated from scratch on 2026-09-13 by a different
+author (Larry Staton Jr., imported from a separate "Tiger 5 Tracker"
+project), now under MIT. Commit `8f1c6a4` no longer exists there. That
+license covers the new codebase only, not the material actually forked
+into this project — see `NOTICE.md` for the full detail.
 
 Ported files:
 - `src/glitter_uikit/ffi.clj` — `src/glimmer_uikit/ffi.clj`
@@ -101,8 +108,15 @@ code: the AppKit FFI bindings, the widget layer's reshaping, the renderer, the
 app loop, the examples and the docs.
 
 That is a separate question from the status of the code ported IN, and the two
-must not be run together. Upstream `glimmer-uikit` ships **no LICENSE file**, so
-absent one, default copyright reserves all rights and no grant has been made for
-those files. `NOTICE.md` records that accurately and file by file. This
-project's EPL 2.0 grant does not extend to the upstream material it vendors, and
-nothing here should be read as claiming otherwise.
+must not be run together. At the commit actually ported from, upstream
+`glimmer-uikit` shipped **no LICENSE file**, so absent one, default copyright
+reserved all rights and no grant was made for those files. `NOTICE.md` records
+that accurately and file by file. This project's EPL 2.0 grant does not extend
+to the upstream material it vendors, and nothing here should be read as
+claiming otherwise.
+
+**As of 2026-09-18, the live `jolt-lang/glimmer-uikit` repository is a
+different project entirely** — recreated 2026-09-13 by a different author,
+now MIT-licensed. That license covers the new, unrelated codebase, not the
+material this project actually vendored. See `NOTICE.md`'s top section for
+the full detail.
