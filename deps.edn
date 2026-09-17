@@ -46,17 +46,11 @@
  ;; arrive transitively through glitter's own pins of these coordinates; now
  ;; declared directly since glitter is no longer in the graph. Same SHAs
  ;; glitter carries them at.
- ;; git@ (SSH), not https:// like every other pin in this file — both repos
- ;; are PRIVATE, and jolt's git fetch can't authenticate an anonymous https
- ;; clone against a private repo. SSH works because it reuses this machine's
- ;; existing GitHub SSH key. Anyone else building this (CI, another
- ;; contributor's machine) needs that same SSH access configured, or these
- ;; two repos made public.
  :deps {io.github.jlt-commons/glitter-core
-        {:git/url "git@github.com:jlt-commons/glitter-core.git"
+        {:git/url "https://github.com/jlt-commons/glitter-core"
          :git/sha "8fb74264008b087e1fec7b30cf81a2862188622c"}
         io.github.jlt-commons/nexus-jolt
-        {:git/url "git@github.com:jlt-commons/nexus-jolt.git"
+        {:git/url "https://github.com/jlt-commons/nexus-jolt"
          :git/sha "353f31255629fa0ec134c5daed68dbd2aa80c300"}
         weavejester/hiccup
         {:git/url "https://github.com/weavejester/hiccup"
