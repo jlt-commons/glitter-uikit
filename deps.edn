@@ -51,7 +51,7 @@
          :git/sha "4fba1ddb069be798adc1ef0c028e6e21a21ec9f3"}
         io.github.jlt-commons/nexus-jolt
         {:git/url "https://github.com/jlt-commons/nexus-jolt"
-         :git/sha "353f31255629fa0ec134c5daed68dbd2aa80c300"}
+         :git/sha "18363987bed79f3ec98aaaf6c274cb01dfff88e7"}
         weavejester/hiccup
         {:git/url "https://github.com/weavejester/hiccup"
          :git/sha "b6b12097ba973141fe87c1b4d6a27ddcce5d5929"}
