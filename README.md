@@ -2,10 +2,13 @@
 
 An AppKit (native macOS) renderer for
 [glitter](https://github.com/jlt-commons/glitter) — a Replicant-style Clojure UI
-library on [Jolt](https://github.com/jolt-lang/jolt). Ported from
-[glimmer-uikit](https://github.com/jolt-lang/glimmer-uikit), which does the
-same for [glimmer](https://github.com/jolt-lang/glimmer) (glitter's
-Reagent-style sibling). A data-driven registry maps hiccup tags to AppKit
+library on [Jolt](https://github.com/jolt-lang/jolt). Ported from the
+2026-08-20 AppKit code of glimmer-uikit, the renderer for
+[glimmer](https://github.com/jolt-lang/glimmer) (glitter's Reagent-style
+sibling). That repository has since been recreated as glimmer's iOS (UIKit)
+backend; glimmer's macOS renderer is now
+[glimmer-appkit](https://github.com/jolt-lang/glimmer-appkit), the
+counterpart of this package. A data-driven registry maps hiccup tags to AppKit
 views, and glitter's reconciler drives prop/event wiring through the
 `IRender`/`IMemory` protocols.
 
